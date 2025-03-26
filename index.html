@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gemstone Showdown</title>
+  <link rel="stylesheet" type="text/css" href="style.css" />
+</head>
+<body>
+  <div class="logo" title="Welcome to Gemstone Showdown!">
+    <h1>Gemstone Showdown</h1>
+  </div>
+
+  <div id="character-bar">
+    <!-- Character names will be dynamically inserted here -->
+  </div>
+
+  <div class="characterInfo">
+    <div id="detailed-info">
+      <p id="name">Character's Name</p>
+      <img
+        id="image"
+        src="assets/new-character.jpg"
+        alt="Image of Character's Name"
+      />
+      <h4>Total Votes: <span id="vote-count">Character's Votes</span></h4>
+      <form id="votes-form">
+        <input type="text" placeholder="Enter Votes" id="votes" name="votes" aria-label="Enter your votes" />
+        <input type="submit" value="Add Votes" />
+      </form>
+      <button id="reset-btn">Reset Votes</button>
+    </div>
+
+    <h4>Add New Character</h4>
+    <form id="character-form">
+      <div>
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" aria-label="Character name" />
+      </div>
+      <div>
+        <label for="image-url">Image URL</label>
+        <input type="text" id="image-url" name="image-url" aria-label="Image URL" />
+      </div>
+      <input type="submit" value="Add Character" />
+    </form>
+  </div>
+
+  <script src="index.js"></script>
+</body>
+</html>

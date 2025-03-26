@@ -1,0 +1,127 @@
+:root {
+  --primary: #ff8c00; /* Original primary color */
+  --secondary: #4682b4; /* Original secondary color */
+  --background: #f4f4f9; /* Light background for better contrast */
+  --text: #333; /* Dark text for readability */
+  --highlight: #f0e68c; /* Adjusted highlight color */
+  --radius: 10px;
+  --shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  --padding: 20px;
+  --transition-duration: 0.3s;
+}
+
+body {
+  font-family: 'Roboto', sans-serif; /* Updated font family */
+  background: linear-gradient(to right, var(--primary), var(--secondary), var(--highlight));
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  margin: 0;
+  padding: var(--padding);
+}
+
+.logo {
+  font-size: 2.5em;
+  color: var(--primary);
+  margin-bottom: var(--padding);
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  text-align: center;
+}
+
+#character-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: center;
+  width: 100%;
+  max-width: 600px;
+  margin-bottom: var(--padding);
+}
+
+.character-item {
+  padding: 20px; /* Increased padding */
+  border: 2px solid var(--secondary);
+  border-radius: var(--radius);
+  background-color: #fff;
+  box-shadow: var(--shadow);
+  text-align: center;
+  cursor: pointer;
+  transition: transform var(--transition-duration) ease, box-shadow var(--transition-duration) ease;
+  flex: 1;
+  min-width: 100px;
+}
+
+.character-item:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.characterInfo {
+  margin-top: var(--padding);
+  padding: 20px; /* Increased padding */
+  border-radius: var(--radius);
+  background-color: #fff;
+  box-shadow: var(--shadow);
+  text-align: center;
+  width: 100%;
+  max-width: 400px;
+}
+
+#detailed-info img {
+  max-width: 100%;
+  border-radius: var(--radius);
+  margin-top: 10px;
+}
+
+form {
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+input, button {
+  width: 100%;
+  max-width: 300px;
+  padding: 12px;
+  border: 1px solid #ced4da;
+  border-radius: var(--radius);
+  margin-top: 10px;
+  box-sizing: border-box;
+  transition: border-color var(--transition-duration); /* Added transition */
+}
+
+button {
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color var(--transition-duration);
+}
+
+button:hover {
+  background-color: var(--secondary);
+}
+
+@media (max-width: 500px) {
+  .logo {
+    font-size: 1.75em;
+  }
+
+  .characterInfo {
+    padding: 15px;
+  }
+}
+
+@media (min-width: 768px) {
+  body {
+    padding: 40px;
+  }
+
+  .logo {
+    font-size: 3em;
+  }
+}
