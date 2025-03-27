@@ -38,20 +38,19 @@ document.addEventListener('DOMContentLoaded', () => {
           showCharacterInfo(index);
         }
       });
-      
+
       // Add Edit button
       const editButton = document.createElement('button');
       editButton.textContent = 'Edit';
       editButton.addEventListener('click', () => handleEditCharacter(character.id));
-      // Ensure the edit button connects to the server
       charDiv.appendChild(editButton);
-      
+
       // Add Delete button
       const deleteButton = document.createElement('button');
       deleteButton.textContent = 'Delete';
       deleteButton.addEventListener('click', () => handleDeleteCharacter(character.id));
       charDiv.appendChild(deleteButton);
-      
+
       characterBar.appendChild(charDiv);
     });
   }
@@ -84,16 +83,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function handleEditCharacter(id) {
     const character = characters.find(c => c.id === id);
-    // Ensure the character data is sent to the server for editing
     if (character) {
       nameInput.value = character.name;
       imageUrlInput.value = character.image;
-      // Update the submit handler to update the character
       characterForm.onsubmit = (event) => {
         event.preventDefault();
         const updatedCharacter = {
           name: nameInput.value.trim(),
-          votes: character.votes, // Keep the existing votes
+          votes: character.votes,
           image: imageUrlInput.value.trim(),
         };
         fetch(`http://localhost:3000/characters/${id}`, {
@@ -106,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(response => response.json())
         .then(data => {
           const index = characters.findIndex(c => c.id === id);
-          characters[index] = data; // Update the character in the array
+          characters[index] = data;
           updateCharacterBar();
           showCharacterInfo(index);
           nameInput.value = '';
@@ -122,10 +119,10 @@ document.addEventListener('DOMContentLoaded', () => {
       method: 'DELETE',
     })
     .then(() => {
-      characters = characters.filter(c => c.id !== id); // Remove character from local array
+      characters = characters.filter(c => c.id !== id);
       updateCharacterBar();
       if (currentCharacterIndex >= characters.length) {
-        currentCharacterIndex = characters.length - 1; // Adjust index if needed
+        currentCharacterIndex = characters.length - 1;
       }
       showCharacterInfo(currentCharacterIndex);
     })
@@ -153,7 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updateCharacterBar();
         nameInput.value = '';
         imageUrlInput.value = '';
-        showCharacterInfo(characters.length - 1); // Show the newly added character
+        showCharacterInfo(characters.length - 1);
       })
       .catch(error => console.error('Error adding character:', error));
     } else {
