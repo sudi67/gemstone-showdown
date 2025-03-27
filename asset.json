@@ -1,34 +1,40 @@
 {
   "characters": [
     {
-      "id": 1,
+      "id": "1",
       "name": "Rainbow",
       "votes": 0,
       "image": "assets/rainbow.jpg"
     },
     {
-      "id": 2,
+      "id": "2",
       "name": "Blue Sky",
       "votes": 0,
       "image": "assets/bluesky.jpg"
     },
     {
-      "id": 3,
+      "id": "3",
       "name": "Ruby",
       "votes": 0,
       "image": "assets/ruby.jpg"
     },
     {
-      "id": 4,
+      "id": "4",
       "name": "Sapphire",
       "votes": 0,
-      "image": "assets/saphire.jpg"
+      "image": "assets/sapphire.jpg"
     },
     {
-      "id": 5,
+      "id": "5",
       "name": "Topaz",
       "votes": 0,
       "image": "assets/topaz.jpg"
+    },
+    {
+      "id": "0b5f",
+      "name": "emareld",
+      "votes": 0,
+      "image": "https://www.shutterstock.com/image-photo/gem-stone-emareld-diamond-jewel-260nw-762645439.jpg"
     }
   ]
 }

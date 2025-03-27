@@ -11,13 +11,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const nameInput = document.getElementById('name-input');
   const imageUrlInput = document.getElementById('image-url');
 
-  let characters = [
-    { name: 'Rainbow', votes: 0, image: 'assets/rainbow.jpg' },
-    { name: 'Blue Sky', votes: 0, image: 'assets/bluesky.jpg' },
-    { name: 'Ruby', votes: 0, image: 'assets/ruby.jpg' },
-    { name: 'Sapphire', votes: 0, image: 'assets/saphire.jpg' },
-    { name: 'Topaz', votes: 0, image: 'assets/topaz.jpg' },
-  ];
+  let characters = [];
+
+  fetch('asset.json')
+    .then(response => response.json())
+    .then(data => {
+      characters = data.characters;
+      updateCharacterBar();
+      showCharacterInfo(currentCharacterIndex);
+    })
+    .catch(error => console.error('Error fetching character data:', error));
 
   let currentCharacterIndex = 0;
 
@@ -35,6 +38,20 @@ document.addEventListener('DOMContentLoaded', () => {
           showCharacterInfo(index);
         }
       });
+      
+      // Add Edit button
+      const editButton = document.createElement('button');
+      editButton.textContent = 'Edit';
+      editButton.addEventListener('click', () => handleEditCharacter(character.id));
+      // Ensure the edit button connects to the server
+      charDiv.appendChild(editButton);
+      
+      // Add Delete button
+      const deleteButton = document.createElement('button');
+      deleteButton.textContent = 'Delete';
+      deleteButton.addEventListener('click', () => handleDeleteCharacter(character.id));
+      charDiv.appendChild(deleteButton);
+      
       characterBar.appendChild(charDiv);
     });
   }
@@ -65,6 +82,56 @@ document.addEventListener('DOMContentLoaded', () => {
     voteCountDisplay.textContent = 0;
   }
 
+  function handleEditCharacter(id) {
+    const character = characters.find(c => c.id === id);
+    // Ensure the character data is sent to the server for editing
+    if (character) {
+      nameInput.value = character.name;
+      imageUrlInput.value = character.image;
+      // Update the submit handler to update the character
+      characterForm.onsubmit = (event) => {
+        event.preventDefault();
+        const updatedCharacter = {
+          name: nameInput.value.trim(),
+          votes: character.votes, // Keep the existing votes
+          image: imageUrlInput.value.trim(),
+        };
+        fetch(`http://localhost:3000/characters/${id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(updatedCharacter),
+        })
+        .then(response => response.json())
+        .then(data => {
+          const index = characters.findIndex(c => c.id === id);
+          characters[index] = data; // Update the character in the array
+          updateCharacterBar();
+          showCharacterInfo(index);
+          nameInput.value = '';
+          imageUrlInput.value = '';
+        })
+        .catch(error => console.error('Error updating character:', error));
+      };
+    }
+  }
+
+  function handleDeleteCharacter(id) {
+    fetch(`http://localhost:3000/characters/${id}`, {
+      method: 'DELETE',
+    })
+    .then(() => {
+      characters = characters.filter(c => c.id !== id); // Remove character from local array
+      updateCharacterBar();
+      if (currentCharacterIndex >= characters.length) {
+        currentCharacterIndex = characters.length - 1; // Adjust index if needed
+      }
+      showCharacterInfo(currentCharacterIndex);
+    })
+    .catch(error => console.error('Error deleting character:', error));
+  }
+
   function handleCharacterSubmit(event) {
     event.preventDefault();
     const newCharacter = {
@@ -73,11 +140,22 @@ document.addEventListener('DOMContentLoaded', () => {
       image: imageUrlInput.value.trim(),
     };
     if (newCharacter.name && newCharacter.image) {
-      characters.push(newCharacter);
-      updateCharacterBar();
-      nameInput.value = '';
-      imageUrlInput.value = '';
-      showCharacterInfo(characters.length - 1); // Show the newly added character
+      fetch('http://localhost:3000/characters', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newCharacter),
+      })
+      .then(response => response.json())
+      .then(data => {
+        characters.push(data);
+        updateCharacterBar();
+        nameInput.value = '';
+        imageUrlInput.value = '';
+        showCharacterInfo(characters.length - 1); // Show the newly added character
+      })
+      .catch(error => console.error('Error adding character:', error));
     } else {
       alert('Both name and image URL are required.');
     }
