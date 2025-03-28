@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     })
     .catch(error => console.error('Error fetching character data:', error));
 
-  let currentCharacterIndex = 0;
+  let currentCharacterIndex = 0; // Declare currentCharacterIndex only once
 
   function updateCharacterBar() {
     characterBar.innerHTML = '';
@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(response => response.json())
         .then(data => {
           const index = characters.findIndex(c => c.id === id);
-          characters[index] = data;
+          characters[index] = data; // Update the character in the array
           updateCharacterBar();
           showCharacterInfo(index);
           nameInput.value = '';
@@ -112,7 +112,8 @@ document.addEventListener('DOMContentLoaded', () => {
         .catch(error => console.error('Error updating character:', error));
       };
     }
-  }
+  } // Ensure this block is properly closed
+
 
   function handleDeleteCharacter(id) {
     fetch(`http://localhost:3000/characters/${id}`, {
@@ -131,12 +132,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function handleCharacterSubmit(event) {
     event.preventDefault();
+    console.log('Adding new character:', nameInput.value.trim(), imageUrlInput.value.trim());
     const newCharacter = {
       name: nameInput.value.trim(),
       votes: 0,
       image: imageUrlInput.value.trim(),
     };
     if (newCharacter.name && newCharacter.image) {
+        console.log('New character data is valid, sending to server...');
       fetch('http://localhost:3000/characters', {
         method: 'POST',
         headers: {
