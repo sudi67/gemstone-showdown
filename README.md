@@ -16,8 +16,8 @@ Gemstone Showdown is a simple web application that allows users to add character
 
 - A modern web browser (e.g., Chrome, Firefox, Edge).
 
-### Installation
+### google docs and slides
+https://docs.google.com/presentation/d/1FB0c0wKsGZSsAX903KgoppjCK5zIxLC6Vw-rItZVvnM/edit?slide=id.g345d69e36c1_0_0#slide=id.g345d69e36c1_0_0
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/sudi67/gemstone-showdown.git
+###  about the project
+The goal of this project is to develop a simple web-based voting system where users can vote for their favorite valuable stone. Using JavaScript and the DOM, the system will allow users to select a stone, submit their vote, and view real-time results. The system must ensure users select a stone before voting and dynamically update the results upon submission.

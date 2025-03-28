@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const imageUrlInput = document.getElementById('image-url');
 
   let characters = [];
+  let currentCharacterIndex = 0;
 
   fetch('asset.json')
     .then(response => response.json())
@@ -22,37 +23,32 @@ document.addEventListener('DOMContentLoaded', () => {
     })
     .catch(error => console.error('Error fetching character data:', error));
 
-  let currentCharacterIndex = 0; // Declare currentCharacterIndex only once
-
   function updateCharacterBar() {
     characterBar.innerHTML = '';
     characters.forEach((character, index) => {
       const charDiv = document.createElement('div');
       charDiv.textContent = character.name;
       charDiv.classList.add('character-item');
-      charDiv.setAttribute('role', 'button');
-      charDiv.setAttribute('tabindex', '0');
+      charDiv.tabIndex = 0;
       charDiv.addEventListener('click', () => showCharacterInfo(index));
       charDiv.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter' || event.key === ' ') {
-          showCharacterInfo(index);
-        }
+        if (event.key === 'Enter' || event.key === ' ') showCharacterInfo(index);
       });
 
-      // Add Edit button
-      const editButton = document.createElement('button');
-      editButton.textContent = 'Edit';
-      editButton.addEventListener('click', () => handleEditCharacter(character.id));
-      charDiv.appendChild(editButton);
+      // Add Edit and Delete buttons
+      const editButton = createButton('Edit', () => editCharacter(character));
+      const deleteButton = createButton('Delete', () => deleteCharacter(character.id));
 
-      // Add Delete button
-      const deleteButton = document.createElement('button');
-      deleteButton.textContent = 'Delete';
-      deleteButton.addEventListener('click', () => handleDeleteCharacter(character.id));
-      charDiv.appendChild(deleteButton);
-
+      charDiv.append(editButton, deleteButton);
       characterBar.appendChild(charDiv);
     });
+  }
+
+  function createButton(label, onClick) {
+    const button = document.createElement('button');
+    button.textContent = label;
+    button.addEventListener('click', onClick);
+    return button;
   }
 
   function showCharacterInfo(index) {
@@ -81,50 +77,48 @@ document.addEventListener('DOMContentLoaded', () => {
     voteCountDisplay.textContent = 0;
   }
 
-  function handleEditCharacter(id) {
-    const character = characters.find(c => c.id === id);
-    if (character) {
-      nameInput.value = character.name;
-      imageUrlInput.value = character.image;
-      characterForm.onsubmit = (event) => {
-        event.preventDefault();
-        const updatedCharacter = {
-          name: nameInput.value.trim(),
-          votes: character.votes,
-          image: imageUrlInput.value.trim(),
-        };
-        fetch(`http://localhost:3000/characters/${id}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(updatedCharacter),
-        })
-        .then(response => response.json())
-        .then(data => {
-          const index = characters.findIndex(c => c.id === id);
-          characters[index] = data; // Update the character in the array
-          updateCharacterBar();
-          showCharacterInfo(index);
-          nameInput.value = '';
-          imageUrlInput.value = '';
-        })
-        .catch(error => console.error('Error updating character:', error));
+  function editCharacter(character) {
+    nameInput.value = character.name;
+    imageUrlInput.value = character.image;
+    characterForm.onsubmit = (event) => {
+      event.preventDefault();
+      const updatedCharacter = {
+        name: nameInput.value.trim(),
+        votes: character.votes,
+        image: imageUrlInput.value.trim(),
       };
-    }
-  } // Ensure this block is properly closed
+      updateCharacter(character.id, updatedCharacter);
+    };
+  }
 
+  function updateCharacter(id, updatedCharacter) {
+    fetch(`http://localhost:3000/characters/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(updatedCharacter),
+    })
+    .then(response => response.json())
+    .then(data => {
+      const index = characters.findIndex(c => c.id === id);
+      characters[index] = data; // Update character in array
+      updateCharacterBar();
+      showCharacterInfo(index);
+      nameInput.value = '';
+      imageUrlInput.value = '';
+    })
+    .catch(error => console.error('Error updating character:', error));
+  }
 
-  function handleDeleteCharacter(id) {
+  function deleteCharacter(id) {
     fetch(`http://localhost:3000/characters/${id}`, {
       method: 'DELETE',
     })
     .then(() => {
       characters = characters.filter(c => c.id !== id);
       updateCharacterBar();
-      if (currentCharacterIndex >= characters.length) {
-        currentCharacterIndex = characters.length - 1;
-      }
+      if (currentCharacterIndex >= characters.length) currentCharacterIndex = characters.length - 1;
       showCharacterInfo(currentCharacterIndex);
     })
     .catch(error => console.error('Error deleting character:', error));
@@ -132,39 +126,39 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function handleCharacterSubmit(event) {
     event.preventDefault();
-    console.log('Adding new character:', nameInput.value.trim(), imageUrlInput.value.trim());
     const newCharacter = {
       name: nameInput.value.trim(),
       votes: 0,
       image: imageUrlInput.value.trim(),
     };
     if (newCharacter.name && newCharacter.image) {
-        console.log('New character data is valid, sending to server...');
-      fetch('http://localhost:3000/characters', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(newCharacter),
-      })
-      .then(response => response.json())
-      .then(data => {
-        characters.push(data);
-        updateCharacterBar();
-        nameInput.value = '';
-        imageUrlInput.value = '';
-        showCharacterInfo(characters.length - 1);
-      })
-      .catch(error => console.error('Error adding character:', error));
+      addCharacter(newCharacter);
     } else {
       alert('Both name and image URL are required.');
     }
   }
 
+  function addCharacter(newCharacter) {
+    fetch('http://localhost:3000/characters', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newCharacter),
+    })
+    .then(response => response.json())
+    .then(data => {
+      characters.push(data);
+      updateCharacterBar();
+      nameInput.value = '';
+      imageUrlInput.value = '';
+      showCharacterInfo(characters.length - 1);
+    })
+    .catch(error => console.error('Error adding character:', error));
+  }
+
+  // Event listeners
   votesForm.addEventListener('submit', handleVoteSubmit);
   resetBtn.addEventListener('click', handleReset);
   characterForm.addEventListener('submit', handleCharacterSubmit);
-
-  updateCharacterBar();
-  showCharacterInfo(currentCharacterIndex);
 });
